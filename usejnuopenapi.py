@@ -73,12 +73,15 @@ mutex=threading.Lock()
 def main():
     while True:
         local_time=datetime.datetime.now() 
-        if local_time.hour==3:
+        if local_time.hour==2:
         #东9区3点开始
             #初始化
-            global target_lst=[]
-            global except_lst=[]
-            global send_lst=[]
+            global target_lst
+            global except_lst
+            global send_lst
+            target_lst=[]
+            except_lst=[]
+            send_lst=[]
             log=""
             #开始
             target_lst=get_target_lst()
