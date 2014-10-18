@@ -73,7 +73,7 @@ mutex=threading.Lock()
 def main():
     while True:
         local_time=datetime.datetime.now() 
-        if local_time.hour==2:
+        if local_time.hour==17:
         #东9区3点开始
             #初始化
             global target_lst
