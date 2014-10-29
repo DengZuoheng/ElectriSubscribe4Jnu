@@ -54,7 +54,7 @@ def get_target_lst():
     ret.append({"dorm":"3309","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3311","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3313","mail":"dengzuoheng@gmail.com"})
-    ret.append({"dorm":"33133","mail":"dengzuoheng@gmail.com"})
+    ret.append({"dorm":"3315","mail":"ghostdreamer@163.com"})
     ret.append({"dorm":"3411","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3412","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3413","mail":"dengzuoheng@gmail.com"})
@@ -73,16 +73,17 @@ mutex=threading.Lock()
 def main():
     while True:
         local_time=datetime.datetime.now() 
-        if local_time.hour==17:
+        if local_time.hour==0:
         #东9区3点开始
             #初始化
             global target_lst
             global except_lst
             global send_lst
+            global log
             target_lst=[]
             except_lst=[]
             send_lst=[]
-            log=""
+            
             #开始
             target_lst=get_target_lst()
             thread_lst=[None]*len(target_lst)
@@ -114,27 +115,26 @@ def main():
             now = datetime.datetime.now() 
             str_now= now.strftime("%Y-%m-%d %H:%M:%S")
             for item in send_lst:
-                str_subject="电费到期通知"
-                str_context="截"+str_now+"您的宿舍"+item['dorm']+"的剩余电量仅剩"+item['remain']+"度.请注意充值"
-                str_context+="\n\n"
+                str_subject=now.strftime("%Y-%m-%d")+u"电费到期通知"
+                str_context=u"截"+str_now+u"您的宿舍"+item['dorm']+u"的剩余电量仅剩"+item['remain']+u"度.请注意充值"
+                str_context+="\n\n---\n"
                 str_context+="技术支持:暨大开发者社区"
                 mail_sender.send(item['mail'],str_subject,str_context)
 
             #给我自己发确认邮件 
-            str_confirm_subject=str_now+"电费检查完成"
-            str_confirm_contex="似乎顺理跑完了一次\n"
+            str_confirm_subject=str_now+u"电费检查完成"
+            str_confirm_contex=u"似乎顺理跑完了一次\n"
             if(len(except_lst)>0):
-                str_confirm_contex+="以下异常账号:\n"
+                str_confirm_contex+=u"以下异常账号:\n"
                 for item in except_lst:
-                    str_confirm_contex+="dorm:"+item['dorm']+" mail:"+item['mail']+"\n以下日志"+log
+                    str_confirm_contex+=u"dorm:"+item['dorm']+u" mail:"+item['mail']+"\n\n"
+            str_confirm_contex+=u"以下日志:\n"+log
             mail_sender.send("dengzuoheng@gmail.com",str_confirm_subject,str_confirm_contex)
-
+            log=""
             #结束后睡眠一个小时避开循环检查
             time.sleep(3600)
         else:
             #半小时一次
-            time.sleep(1800)
-
-            
+            time.sleep(180)         
 
 if __name__=='__main__':main()

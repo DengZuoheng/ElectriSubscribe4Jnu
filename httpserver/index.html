@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="EN" xml:lang="EN">
+	<head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+        <title>暨大珠海校区电费到期订阅</title>
+    </head>
+    <body>
+        <h2>暨大珠海校区电费到期订阅</h2>
+        <form method="post" action="#" >
+            <table>
+                <tr>
+                    <td>*宿舍号:</td>
+                    <td><input type="text" name="dorm" id="dorm" /></td>
+                </tr>
+                <tr>
+                    <td>*电子邮箱:</td>
+                    <td><input type="text" name="mail" id="mail" /></td>
+                </tr>
+                <tr>
+                    <td><br /><input type="submit" name="submit" id="submit" value="提交"/></td>
+                </tr>
+            </table>
+        </form>
+        <p>
+        当电余量低于30度时将自动发送邮件通知.
+        </p>
+        <p>
+        -----
+        </p>
+        <p>
+        测试版 by DengZuoheng@JDC,ChenRenzhan@JDC
+        </p>
+        <script>
+            document.getElementById("submit").onclick=function(){
+                
+                try{
+                
+                    dorm=document.getElementById("dorm").value;
+                    
+                    if(dorm==""||parseInt(dorm)<=1000||parseInt(dorm)>=9999)
+                    {
+                        alert("宿舍号不科学");
+                        return false;
+                    }
+                    mail=document.getElementById("mail").value;
+                    var re = /^[a-z0-9](\w|\.|-)*@([a-z0-9]+-?[a-z0-9]+\.){1,3}[a-z]{2,4}$/;
+                    if(!re.test(mail))
+                    {
+                        alert("邮箱不科学");
+                        return false;
+                    }
+                    return true;
+                }catch(err){
+                    alert(err);
+                    return false;
+                }
+            }
+        </script>
+    </body>
+</html>
+    
