@@ -47,7 +47,7 @@ class PowerGetterThread(threading.Thread):
 
 def get_target_lst():
     ret=[]
-    ret.append({"dorm":"3301","mail":"dengzuoheng@gmail.com"})
+    ret.append({"dorm":"3301","mai  l":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3303","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3305","mail":"dengzuoheng@gmail.com"})
     ret.append({"dorm":"3307","mail":"dengzuoheng@gmail.com"})
