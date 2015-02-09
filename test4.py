@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pycurl
-from pyquery import PyQuery
+import pyquery
 import datetime
 import urllib
 import StringIO
+import re
+import datetime
  
 buf = StringIO.StringIO()
 buf1=StringIO.StringIO()
@@ -39,6 +41,7 @@ c.setopt(c.TIMEOUT,8)
 c.setopt(c.COOKIEFILE,'')
 c.setopt(pycurl.PROXY, '127.0.0.1:8888')
 c.setopt(c.FAILONERROR,True)
+
 c.setopt(c.HTTPHEADER,[
     'Accept: text/html, application/xhtml+xml, */*',
     'Accept-Encoding: gzip, deflate',
@@ -51,6 +54,7 @@ c.setopt(c.HTTPHEADER,[
     'Proxy-Connection: Keep-Alive',
     'User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
     ])
+
 values={
     "__EVENTARGUMENT":"",
     "__EVENTTARGET":"",
@@ -79,25 +83,31 @@ c.setopt(pycurl.WRITEFUNCTION, buf.write)#设置回调
 c.perform()
 
 default_aspx_html=buf.getvalue().decode('utf-8')
-b=default_aspx_html.find('[电表]')
-print(b)
-cc=default_aspx_html.find('|',b)
-print(cc)
-d=default_aspx_html.find('\'',cc)
-print(d)
-meter=default_aspx_html[cc+1:d]
-pq=PyQuery(default_aspx_html)
+
+meter=0
+print(">>>>>>>>>>>>>>")
+res=re.findall(u"\[电表\]\|(\d+)",default_aspx_html)
+if(len(res)!=0):
+    meter=res[0].decode('utf-8')
+
+
+pq=pyquery.PyQuery(default_aspx_html)
 __EVENTVALIDATION=pq('#__EVENTVALIDATION').val()
 
 __VIEWSTATE=pq('#__VIEWSTATE').val()
 
+today=datetime.date.today()
+delta=datetime.timedelta(days=-30)
+oldday=today+delta
+txtstarOld=str(oldday)
+txtstar=str(today)
 
 value2={
     #实际上只查剩余电量的话, 只有__41_value,__bok_ajax_mark,__EVENTVALIDATION,__VIEWSTATE是必须的
 
     '__12_disable_select_row_indexs':'',
-    '__12_last_value':u'[电表]|000001214337',
-    '__12_value':u'[电表]|000001214337',
+    '__12_last_value':u'[电表]|'+meter,
+    '__12_value':u'[电表]|'+meter,
     '__41_disable_select_row_indexs':'',
     '__41_last_value':'00000000',
     '__41_value':'00900200',
@@ -124,9 +134,9 @@ value2={
     'RegionPanel1$Region1$GroupPanel2$Grid3$Toolbar2$pagesize3':'1',
     'tqid':'',
     'tqsort':'',
-    'RegionPanel1$Region3$ContentPanel3$txtstarOld':'2015-1-9',
-    'RegionPanel1$Region3$ContentPanel3$txtstar':'2015-2-9',
-    'RegionPanel1$Region3$ContentPanel3$tb_ammeterNumb':u'[电表]000001214337',
+    'RegionPanel1$Region3$ContentPanel3$txtstarOld':txtstarOld,
+    'RegionPanel1$Region3$ContentPanel3$txtstar':txtstar,
+    'RegionPanel1$Region3$ContentPanel3$tb_ammeterNumb':u'[电表]'+meter,
 }
 post_data2=urllib.urlencode(value2)
 #print(post_data2)
@@ -150,17 +160,18 @@ c.setopt(c.HTTPHEADER,[
     ])
 """
 c.perform()
+
 str3=buf1.getvalue()
-ee=str3.find('__27.setValue')
-ff=str3.find('"',ee)
-gg=str3.find('"',ff+2)
-print(str3[ff:gg])
 
 
+res=re.findall(u"box\.__27\.setValue\(\"(\d+\.\d+)\"\)",str3)
+print(res[0])
 
 print(string)
 print "status code: %s" % c.getinfo(pycurl.HTTP_CODE)
 print(string)
+if (200==c.getinfo(pycurl.HTTP_CODE)):
+    print(u"成功")
 c.close()
 print(string)
 callback(buf)
