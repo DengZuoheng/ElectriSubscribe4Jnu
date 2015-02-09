@@ -1,0 +1,21 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <!--
+                这里的几个alert类的div用于指示操作成功, 需要分种类指示
+                不用于指示的加入.hidden类即可隐藏
+            -->
+            
+            <div class="alert alert-success" role="alert">
+                <p><span class="glyphicon glyphicon-ok">&nbsp;</span><strong class="text-lg">成功创建预约!</strong></p>
+                <p>请在24小时内联系值班干事<strong >&nbsp;{{ success.watcher.name }} / {{ success.watcher.lpnumber }} / {{ success.watcher.spnumber }}&nbsp;</strong>安排取书时间 </p>
+                <p><strong class="text-danger">否则预约将被取消!</strong></p>
+                <p></p>
+                <a href="{{ success.back_href }}" class="btn btn-success btn-xs">返回</a>
+            </div>
+            
+            {% endif %}
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+  </body>
+</html>

@@ -1,0 +1,123 @@
+{% include 'includes/header.html' %}
+        <div class="lead"></div>
+        <div class="container">
+            <form class="form-horizontal" role="form" method="post" action="/SubcribeAction/">
+                {% csrf_token %}
+                {% if error_item %}
+                <div class="form-group">
+                    <label class="text-danger col-sm-2 control-label">* 异常</label>
+                    <div class="col-sm-10 form-control-static" role="alert">
+                        <strong class="text-danger">{{ error_item.what }}</strong>
+                    </div>
+                </div>
+                
+                {% endif %}
+                <div class="form-group">
+                    <label for="input-dorm" class="col-sm-2 control-label">宿舍号:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="input-dorm" name="input-dorm" placeholder="宿舍号" {% if error_item %}value="{{ error_item.inputed_dorm }}"{% endif %}>
+                        <span id="feedback-dorm" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-mail" class="col-sm-2 control-label">邮箱:</label>
+                    <div class="col-sm-10 has-feedback">
+                        <input type="text" class="form-control" id="input-mail" name="input-mail" placeholder="邮箱" {% if error_item %}value="{{ error_item.inputed_mail }}"{% endif %}>
+                        <span id="feedback-mail" class="glyphicon form-control-feedback"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" id="submit" name="submit" class="btn btn-primary btn-block">提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+{% include 'includes/footer.html' %}
+{% load staticfiles %}
+        <script>
+        function isDorm(str){
+
+            try{
+                var pattern = /^\d{4}$/; 
+                if(pattern.test(str)){
+                    console.log("FFFFFFFFFFF")
+                    return true;
+                }else{
+
+                    return false;
+                }
+            }catch(e){
+
+                console.log(e);
+                return false;
+            }
+        }
+        function isMail(str){
+            try{
+                var pattern = /^[a-z0-9](\w|\.|-).*@([a-z0-9]+-?[a-z0-9]+\.){1,3}[a-z]{2,4}$/;
+                if(pattern.test(str)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }catch(e){
+                console.log(e);
+                return false;
+            }
+            
+        }
+        (function(){
+            $("#input-dorm, #input-mail").change(function(){
+                attr=$(this).attr("id").replace("input-","")
+                console.log(attr);
+                temp=$(this).val();
+                console.log(temp)
+                error=false;
+                if(attr=="dorm"&&!isDorm(temp)){
+                    
+                    error=true;
+                }else if(attr=="mail"&&!isMail(temp)){
+                    error=true;
+                }
+                console.log(error);
+                if(error==true){
+                    $(this).attr("placeholder","非法输入").parent().removeClass("has-success").addClass("has-error");
+                    $("#feedback-"+attr).attr("class","glyphicon form-control-feedback").addClass("glyphicon-remove");
+                    $("#submit").removeClass("btn-primary").addClass("btn-danger").attr("disabled",true);
+
+                }else{
+                    $(this).parent().removeClass("has-error").addClass("has-success");
+                    $("#feedback-"+attr).attr("class","glyphicon form-control-feedback").addClass("glyphicon-ok");
+                    $("#submit").removeClass("btn-danger").addClass("btn-primary").attr("disabled",false);
+                }
+            });
+            try{
+                $("#input-dorm")[0].oninput=function(){
+                    if($(this).val().length==4){
+                        $(this).change();
+                    }
+                }
+                $("#input-mail")[0].oninput=function(){
+                    
+                    $(this).change();
+                   
+                }
+            }catch(e){
+                console.log(e)
+                console.log("不支持oninput")
+            }
+            $("#submit").click(function(){
+                if($("#input-dorm").val().length==0)
+                {
+                    $("#input-dorm").change();
+                    return false;
+                }else{
+                    return true;
+                }
+            });
+        })();
+        </script>
+  </body>
+</html>
