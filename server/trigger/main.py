@@ -27,6 +27,7 @@ def main():
     #执行其他操作
     trigger.snap_all()#先抓下左右剩余电量存起来
     trigger.check_all()#然后检查时候需要报警
+    trigger.confirm_to_me()#再然后, 给我自己发一份确认
     #最后
     set_timer(hour=0,callback=main)
     pass

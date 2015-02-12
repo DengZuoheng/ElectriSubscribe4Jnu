@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import pycurl
 from django.db import models
+from MailSender import MailSender
+import datetime
+import StringIO
+import json
+import urllib
 # Create your models here.
 
 class Record(models.Model):
@@ -19,3 +25,49 @@ class Record(models.Model):
     #剩余电量
     current_remain=models.FloatField(blank=True,default=30.00)
 
+    def warning(self):
+        if(self.current_remain<=self.lower_limit):
+            self.feedback()
+            self.callback()
+
+    def feedback(self):
+        if(self.feedback_type=='mail'):
+            mail_sender=MailSender("dengzuoheng@gmail.com","ainsophaur000")
+            str_now= now.strftime("%Y-%m-%d %H:%M:%S")
+            str_subject=now.strftime("%Y-%m-%d")+u"电费到期通知"
+            str_context=u"截"+str_now+u"您的宿舍"+self.dorm+u"的剩余电量仅剩"+item['remain']+u"度.请注意充值"
+            str_context+="\n\n---\n"
+            str_context+="技术支持:暨大开发者社区"
+            mail_sender.send(self.alarm_mode,str_subject,str_context)
+
+    def callback(self):
+        buf = StringIO.StringIO()
+        c=pycurl.Curl()
+        url=self.callback
+        value={
+            'dorm':self.dorm,
+            'reamin':self.current_remain,
+        }
+        data=urllib.urlencode(value)
+        c.setopt(pycurl.URL, url+'?'+data)
+        c.setopt(pycurl.CONNECTTIMEOUT,5)
+        c.setopt(pycurl.TIMEOUT,8)
+        c.setopt(pycurl.COOKIEFILE,'')
+        c.setopt(pycurl.FAILONERROR,True)     
+        c.setopt(pycurl.WRITEFUNCTION, buf.write)#设置回调
+        c.perform()
+
+class Error(models.Model):
+    what=models.TextField(blank=True)
+
+    def json(self):
+        try:
+            ret=json.loads(self.what)
+            return ret
+        except Exception as e:
+            return {'what':self.what}
+    def __unicode__(self):
+        return {
+            'id':self.id,
+            'what':self.what,
+        }
