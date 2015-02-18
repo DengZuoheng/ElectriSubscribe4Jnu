@@ -15,4 +15,18 @@ def form(request):
             context_instance=RequestContext(request))
 
 def subcribe_action(request):
-    pass
+    input_dorm=request.POST['input-dorm']
+    input_mail=request.POST['input-mail']
+    try:
+        record=Record(dorm=input_dorm,alarm_mode=input_mail)
+        record.save()
+        return HttpResponseRedirect('/success')
+    except Exception as e:
+        error=Error(what=unicode(e))
+        error.save()
+        return HttpResponseRedirect(reverse('library.views.form', args=[error.id]))
+
+def success(request):
+    return render_to_response(
+            'success.html',
+        )
