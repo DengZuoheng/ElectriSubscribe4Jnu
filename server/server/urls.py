@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^$', views.form),
     url(r'^index/$',views.form),
     url(r'^form/$',views.form),
+    url(r'^form/err/(\d+)$',views.form),
     url(r'^SubcribeAction/$',views.subcribe_action),
 )
