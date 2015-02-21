@@ -9,7 +9,7 @@ path=os.path.abspath(os.path.pardir)
 sys.path.append(path)
 print(sys.path)
 #import subscriber.models
-from subscriber import models
+from subscriber.models import Record, Error
 import service
 import threading
 
@@ -68,3 +68,5 @@ def confirm_to_me():
 
         mail_sender.send("dengzuoheng@gmail.com",str_confirm_subject,str_confirm_contex)
         Error.objects.all().delete()
+    except:
+        pass
