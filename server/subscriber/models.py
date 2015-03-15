@@ -25,6 +25,20 @@ class Record(models.Model):
     #剩余电量
     current_remain=models.FloatField(blank=True,default=30.00)
 
+    def set(self,
+        dorm='',
+        feedback_type='',
+        alarm_mode='',
+        lower_limit='',
+        callback='',
+        current_remain=''):
+        self.dorm=dorm
+        self.feedback_type=feedback_type
+        self.alarm_mode=alarm_mode
+        self.lower_limit=lower_limit
+        self.callback=callback
+        self.current_remain=current_remain
+
     def warning(self):
         if(self.current_remain<=self.lower_limit):
             self.feedback()
@@ -32,10 +46,13 @@ class Record(models.Model):
 
     def feedback(self):
         if(self.feedback_type=='mail'):
+
             mail_sender=MailSender("dengzuoheng@gmail.com","ainsophaur000")
+            import datetime
+            now=datetime.datetime.now()
             str_now= now.strftime("%Y-%m-%d %H:%M:%S")
             str_subject=now.strftime("%Y-%m-%d")+u"电费到期通知"
-            str_context=u"截"+str_now+u"您的宿舍"+self.dorm+u"的剩余电量仅剩"+item['remain']+u"度.请注意充值"
+            str_context=u"截"+str_now+u"您的宿舍"+self.dorm+u"的剩余电量仅剩"+self.current_remain+u"度.请注意充值"
             str_context+="\n\n---\n"
             str_context+="技术支持:暨大开发者社区"
             mail_sender.send(self.alarm_mode,str_subject,str_context)

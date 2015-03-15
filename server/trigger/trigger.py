@@ -1,44 +1,56 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #trigger.py
-import sys
-import os
-curdir=os.path.abspath(os.curdir)
-#path=os.path.abspath(os.path.join(os.path.pardir,'subscriber\\'))
-path=os.path.abspath(os.path.pardir)
-sys.path.append(path)
-print(sys.path)
+from django.conf import settings
+import server.settings
+from MailSender import MailSender
+settings.configure(DATABASES = server.settings.DATABASES)
+
 #import subscriber.models
 from subscriber.models import Record, Error
 import service
 import threading
+import json 
 
 class SnaperThread(threading.Thread):
     def __init__(self,record):
+        print(record.dorm)
         threading.Thread.__init__(self)
         self.record=record
 
     def run(self):
+        import os
+        import sys
+
+        from django.core.wsgi import get_wsgi_application
+
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'server.settings'
+        application = get_wsgi_application()
+        from subscriber.models import Record, Error
         try:
-            remain=service.get_remain(self.record.dorm)
-            self.record.current_remain=remain
-            self.record.save()
+            
+            remain=service.get_remain(self.record.dorm)        
+            record=Record.objects.get(id=self.record.id)         
+            record.current_remain=remain
+            record.save()
+        
         except Exception as e:
+           
             what={
                 'what':str(e),
-                'id':str(self.id),
-                'dorm':str(selg.dorm),
+                'id':str(self.record.id),
+                'dorm':str(self.record.dorm),
             }
             what_str=json.dumps(what)
             error=Error(what=what_str)
             error.save()
+        
 
 #检查所有定制
 def check_all():
     query_set=Record.objects.all()
     for item in query_set:
         item.warning()
-    confirm_to_me()
 
 def snap_all():
     thread_list=[]
@@ -51,6 +63,7 @@ def snap_all():
         item.join()
 
 def confirm_to_me():
+
     mail_sender=MailSender("dengzuoheng@gmail.com","ainsophaur000")
     now = datetime.datetime.now() 
     str_confirm_subject=str_now+u"电费检查完成"

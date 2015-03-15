@@ -30,12 +30,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'subscriber',
+    'trigger',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,3 +92,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+DJANGO_SETTINGS_MODULE='c:\\Python27\\Lib\\site-packages\\Django-1.7.1-py2.7.egg\\django\\bin\\'

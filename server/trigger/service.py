@@ -18,7 +18,7 @@ import unittest
 
 def get_remain(dorm):
     try:
-        return use_local_request(drom)
+        return use_local_request(dorm)
     except:
         return None
 
