@@ -14,19 +14,18 @@ import json
 
 class SnaperThread(threading.Thread):
     def __init__(self,record):
-        print(record.dorm)
         threading.Thread.__init__(self)
         self.record=record
 
     def run(self):
         import os
         import sys
-
         from django.core.wsgi import get_wsgi_application
 
         os.environ['DJANGO_SETTINGS_MODULE'] = 'server.settings'
         application = get_wsgi_application()
         from subscriber.models import Record, Error
+        
         try:
             
             remain=service.get_remain(self.record.dorm)        
