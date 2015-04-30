@@ -11,6 +11,9 @@ import cookielib
 import re
 import urllib
 import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 
 def express_local(dorm):
     cookie = cookielib.CookieJar()  
@@ -37,9 +40,30 @@ def express_local(dorm):
     js_response = opener.open(urllib2.Request(default_url, ajax_post_data))
     fin_data = js_response.read()
     return re.findall(u"box\.__27\.setValue\(\"(\d+\.\d+)\"\)",fin_data)[0]
-    
+   
+def mail_me(remain,alert_value):
+    addr = 'dengzuoheng@gmail.com'
+    pw = 'ainsophaur000'
+    host = 'smtp.gmail.com'
+    port = 25
+    server  = smtplib.SMTP(host,port)
+    server.ehlo()
+    server.starttls()
+    self.ehlo()
+    server.login(addr,pw)
+    content = ''
+    msg = MIMEText(content,_charset='utf-8')
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    if((int(remain)<=alert_value)):
+        subject = u'[import!][电费报警] %s %s'%(remain,date)
+    else:
+        subject = u'[电费报告] %s %s'%(remain,date)
+    msg['To'] = addr
+    msg['Subject'] = subject 
+    server.sendmail(addr,addr,msg.as_string())
+
 def main():
-    print(express_local('3313'))
+    mail_me(express_local('3313'),240)
 
 if __name__=='__main__':
     main()
