@@ -53,7 +53,7 @@ def use_local_request(dorm):
     c.setopt(pycurl.CONNECTTIMEOUT,5)
     c.setopt(pycurl.TIMEOUT,8)
     c.setopt(pycurl.COOKIEFILE,'')
-    c.setopt(pycurl.PROXY, '127.0.0.1:8888')#port8888可用于监视
+    #c.setopt(pycurl.PROXY, '127.0.0.1:8888')#port8888可用于监视
     c.setopt(pycurl.FAILONERROR,True)
     #header其实是可以不要的
     c.setopt(pycurl.HTTPHEADER,[
@@ -106,7 +106,8 @@ def use_local_request(dorm):
     res=re.findall(u"\[电表\]\|(\d+)",html)
     if(len(res)!=0):
         meter=res[0].decode('utf-8')
-
+        f = open('abcdef.txt','w')
+        f.write(html)
         #准备ajax获取剩余电量的参数
         pq=pyquery.PyQuery(html)
 
@@ -179,12 +180,6 @@ def use_local_request(dorm):
 
 #单元测试
 class ServiceTestCase(unittest.TestCase):
-    
-    def test_publicAPT(self):
-        print(u"use publicAPI")
-        print(use_publicAPI('3313'))
-    
-
     def test_local_request(self):
         print(u"use local request")
         print(use_local_request('3313'))
