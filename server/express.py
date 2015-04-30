@@ -14,6 +14,8 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
+import threading
+import time
 
 def express_local(dorm):
     cookie = cookielib.CookieJar()  
@@ -49,21 +51,41 @@ def mail_me(remain,alert_value):
     server  = smtplib.SMTP(host,port)
     server.ehlo()
     server.starttls()
-    self.ehlo()
+    server.ehlo()
     server.login(addr,pw)
     content = ''
     msg = MIMEText(content,_charset='utf-8')
     date = datetime.datetime.now().strftime('%Y-%m-%d')
-    if((int(remain)<=alert_value)):
-        subject = u'[import!][电费报警] %s %s'%(remain,date)
+    if((float(remain)<=alert_value)):
+        subject = u'[important!][电费报警] %s %s'%(remain,date)
     else:
         subject = u'[电费报告] %s %s'%(remain,date)
     msg['To'] = addr
     msg['Subject'] = subject 
     server.sendmail(addr,addr,msg.as_string())
 
-def main():
+def set_timer(timer,hour,minute=0,second=0,callback=None,callback_parm=[]):
+    now=datetime.datetime.now()
+    t1=now.hour*3600+now.minute*60+now.second
+    t2=hour*3600+minute*60+second
+    if(t1<t2):
+        timer = threading.Timer(t2-t1, callback, callback_parm)
+        timer.start()
+    elif(t2<t1):
+        timer = threading.Timer(24*3600-t1+t2, callback, callback_parm)
+        timer.start()
+    else:#t1=t2
+        timer = threading.Timer(1, callback, callback_parm)
+        timer.start()
+
+def main(timer=None):
     mail_me(express_local('3313'),240)
+    #最后
+    if(timer!=None):
+        set_timer(timer=timer,hour=0,callback=main,callback_parm=[timer,])
+    pass
 
 if __name__=='__main__':
-    main()
+    timer=None
+    main(timer)
+    set_timer(timer=timer,hour=0,callback=main,callback_parm=[timer,])
