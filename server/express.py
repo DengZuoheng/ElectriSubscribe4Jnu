@@ -79,7 +79,7 @@ def set_timer(timer,hour,minute=0,second=0,callback=None,callback_parm=[]):
         timer.start()
 
 def main(timer=None):
-    mail_me(express_local('3313'),240)
+    mail_me(express_local('3313'),30)
     #最后
     if(timer!=None):
         set_timer(timer=timer,hour=0,callback=main,callback_parm=[timer,])
