@@ -64,28 +64,18 @@ def mail_me(remain,alert_value):
     msg['Subject'] = subject 
     server.sendmail(addr,addr,msg.as_string())
 
-def set_timer(timer,hour,minute=0,second=0,callback=None,callback_parm=[]):
-    now=datetime.datetime.now()
-    t1=now.hour*3600+now.minute*60+now.second
-    t2=hour*3600+minute*60+second
-    if(t1<t2):
-        timer = threading.Timer(t2-t1, callback, callback_parm)
-        timer.start()
-    elif(t2<t1):
-        timer = threading.Timer(24*3600-t1+t2, callback, callback_parm)
-        timer.start()
-    else:#t1=t2
-        timer = threading.Timer(1, callback, callback_parm)
-        timer.start()
+import threading
 
-def main(timer=None):
+def set_interval(func, sec):
+    def func_wrapper():
+        set_interval(func, sec)
+        func()
+    t = threading.Timer(sec, func_wrapper)
+    t.start()
+    return t
+
+def main():
     mail_me(express_local('3313'),30)
-    #最后
-    if(timer!=None):
-        set_timer(timer=timer,hour=0,callback=main,callback_parm=[timer,])
-    pass
 
 if __name__=='__main__':
-    timer=None
-    main(timer)
-    set_timer(timer=timer,hour=0,callback=main,callback_parm=[timer,])
+    set_interval(main,24*3600)
